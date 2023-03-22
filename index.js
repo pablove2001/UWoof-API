@@ -26,7 +26,7 @@ mongoose.connect(mongoUrl).then(() => {
     console.log('Successfully connected to the database');
 
     app.listen(port, function () {
-        console.log(mongoUrl);
+        // console.log(mongoUrl);
         console.log(`App is running in port http://localhost:${port}/`);
     });
 

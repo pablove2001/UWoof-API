@@ -12,7 +12,7 @@ const petSchema = new Schema({
     height_cm: { type: Number, default: -1 },
     long_cm: { type: Number, default: -1 },
     weight_kg: { type: Number, default: -1 },
-    owner: { type: String, required: true },
+    user_id: { type: String, required: true },
     purpose: { type: String, required: true },
     publication_date: { type: Date, default: Date.now },
     purpose_achieved: { type: Boolean, default: false },

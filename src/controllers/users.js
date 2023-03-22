@@ -45,7 +45,6 @@ function putUser(req, res) {
             return res.status(404).json({ message: 'User not found' });
         }
 
-        user.type = req.body.type || user.type;
         user.name = req.body.name || user.name;
         user.last_name = req.body.last_name || user.last_name;
         user.email = req.body.email || user.email;
@@ -76,25 +75,6 @@ function deleteUser(req, res) {
     }).catch(error => {
         res.status(400).json({ message: 'Internal Server Error' });
     });
-    // User.findOne({ _id: req.params.id, deleted: false }).then(user => {
-    //     if (!user) {
-    //         return res.status(404).json({ message: 'User not found' });
-    //     }
-
-    //     user.deleted = true;
-
-    //     user.save().then(deletedUser => {
-    //         res.json({ message: 'User deleted successfully', deletedUser: deletedUser });
-    //     }).catch(err => {
-    //         console.log(err);
-    //         res.status(500).json({ message: 'Internal Server Error' });
-    //     });
-    // }).catch(err => {
-    //     console.error(err);
-    //     res.status(400).json({
-    //         message: 'Invalid input data'
-    //     });
-    // });
 }
 
 module.exports = { getUsers, getUser, postUser, putUser, deleteUser };
