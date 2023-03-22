@@ -3,8 +3,6 @@ const router = express.Router();
 const { getUsers, getUser, postUser, putUser, deleteUser } = require('./../controllers/users');
 
 /**
- * Obtiene una lista de todos los usuarios activos.
- *
  * @swagger
  * /users:
  *   get:
@@ -16,8 +14,6 @@ const { getUsers, getUser, postUser, putUser, deleteUser } = require('./../contr
  *         description: Lista de usuarios activos.
  *         schema:
  *           type: array
- *           items:
- *             $ref: '#/definitions/User'
  *       400:
  *         description: Error interno del servidor.
  */
@@ -41,8 +37,6 @@ router.get('', getUsers);
  *     responses:
  *       200:
  *         description: Usuario encontrado.
- *         schema:
- *           $ref: '#/definitions/User'
  *       404:
  *         description: Usuario no encontrado.
  *       400:
@@ -51,69 +45,149 @@ router.get('', getUsers);
 router.get('/:id', getUser);
 
 /**
- * Creates a new user.
+ * Registra un nuevo usuario en la aplicación
  *
  * @swagger
  * /api/users:
  *   post:
- *     summary: Creates a new user.
- *     description: Creates a new user with the given information.
- *     consumes:
- *       - application/json
- *     produces:
- *       - application/json
- *     parameters:
- *       - in: body
- *         name: user
- *         description: The user to create.
- *         schema:
- *           type: object
- *           properties:
- *             name:
- *               type: string
- *               example: John
- *             last_name:
- *               type: string
- *               example: Doe
- *             email:
- *               type: string
- *               example: john.doe@example.com
- *             password:
- *               type: string
- *               example: password123
- *             birthday:
- *               type: string
- *               format: date
- *               example: 1990-01-01
- *             profile_picture:
- *               type: string
- *               example: https://example.com/profile.jpg
- *           required:
- *             - name
- *             - last_name
- *             - email
- *             - password
+ *     summary: Registra un nuevo usuario en la aplicación
+ *     description: Crea un nuevo usuario en la base de datos de la aplicación
+ *     requestBody:
+ *       description: Datos del nuevo usuario a crear
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 description: Nombre del usuario
+ *               last_name:
+ *                 type: string
+ *                 description: Apellido del usuario
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 description: Correo electrónico del usuario
+ *               password:
+ *                 type: string
+ *                 format: password
+ *                 description: Contraseña del usuario
+ *               birthday:
+ *                 type: string
+ *                 format: date
+ *                 description: Fecha de nacimiento del usuario
+ *               profile_picture:
+ *                 type: string
+ *                 format: binary
+ *                 description: Imagen de perfil del usuario
  *     responses:
- *       '200':
- *         description: The created user.
- *         schema:
- *           $ref: '#/definitions/User'
- *       '400':
- *         description: Invalid input data.
- *         schema:
- *           type: object
- *           properties:
- *             message:
- *               type: string
- *               example: Invalid input data
- *           required:
- *             - message
+ *       200:
+ *         description: Nuevo usuario creado exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 _id:
+ *                   type: string
+ *                   description: ID del usuario creado
+ *                 name:
+ *                   type: string
+ *                   description: Nombre del usuario creado
+ *                 last_name:
+ *                   type: string
+ *                   description: Apellido del usuario creado
+ *                 email:
+ *                   type: string
+ *                   description: Correo electrónico del usuario creado
+ *                 password:
+ *                   type: string
+ *                   description: Contraseña del usuario creado (encriptada)
+ *                 birthday:
+ *                   type: string
+ *                   description: Fecha de nacimiento del usuario creado
+ *                 profile_picture:
+ *                   type: string
+ *                   description: URL de la imagen de perfil del usuario creado
+ *       400:
+ *         description: Error en la validación de los datos del usuario
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: Mensaje de error indicando qué dato no es válido
  */
 router.post('', express.json(), postUser);
 
-
+/**
+ * @swagger
+ * /users/{id}:
+ *   put:
+ *     summary: Actualiza un usuario por ID
+ *     description: Actualiza un usuario con el ID especificado en la base de datos.
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         description: ID del usuario a actualizar
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: ObjectId
+ *       - in: body
+ *         name: user
+ *         description: Campos del usuario a actualizar
+ *         required: true
+ *     responses:
+ *       '200':
+ *         description: Usuario actualizado correctamente
+ *         content:
+ *           application/json:
+ *       '400':
+ *         description: Datos de entrada no válidos
+ *       '404':
+ *         description: Usuario no encontrado
+ *       '500':
+ *         description: Error interno del servidor
+ * */
 router.put('/:id', express.json(), putUser);
 
+/**
+ * @swagger
+ * /users/{id}:
+ *   delete:
+ *     summary: Delete a user by ID
+ *     description: Delete a user with the specified ID from the database.
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         description: ID of the user to delete
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: ObjectId
+ *     responses:
+ *       '200':
+ *         description: User deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: 'User deleted successfully'
+ *       '400':
+ *         description: Invalid request
+ *       '404':
+ *         description: User not found
+ *       '500':
+ *         description: Internal Server Error
+ * */
 router.delete('/:id', express.json(), deleteUser);
 
 

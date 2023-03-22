@@ -16,8 +16,6 @@ const { getPets, getPet, postPet, putPet, deletePet } = require('./../controller
  *         description: Retorna todos los animales de compañía no eliminados y cuyo propósito no se ha logrado.
  *         schema:
  *           type: array
- *           items:
- *             $ref: '#/definitions/Pet'
  *       400:
  *         description: Algo salió mal al procesar la solicitud.
  */
@@ -41,8 +39,6 @@ router.get('', getPets);
  *     responses:
  *       200:
  *         description: Retorna el animal de compañía solicitado.
- *         schema:
- *           $ref: '#/definitions/Pet'
  *       404:
  *         description: El animal de compañía no fue encontrado.
  */
@@ -64,13 +60,9 @@ router.get('/:id', getPet);
  *         name: body
  *         description: Información del animal de compañía a crear.
  *         required: true
- *         schema:
- *           $ref: '#/definitions/PetInput'
  *     responses:
  *       200:
  *         description: Retorna el animal de compañía creado.
- *         schema:
- *           $ref: '#/definitions/Pet'
  *       400:
  *         description: Datos de entrada inválidos.
  */
@@ -97,13 +89,9 @@ router.post('', express.json(), postPet);
  *         name: body
  *         description: Información del animal de compañía a actualizar.
  *         required: true
- *         schema:
- *           $ref: '#/definitions/PetInput'
  *     responses:
  *       200:
  *         description: Retorna el animal de compañía actualizado.
- *         schema:
- *           $ref: '#/definitions/Pet'
  *       400:
  *         description: Datos de entrada inválidos.
  *       404:
@@ -135,8 +123,6 @@ router.put('/:id', express.json(), putPet);
  *             message:
  *               type: string
  *               example: Pet deleted successfully
- *             pet:
- *               $ref: '#/definitions/Pet'
  *       400:
  *         description: Error interno del servidor.
  *       404:
