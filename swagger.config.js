@@ -10,5 +10,5 @@ module.exports = {
             "servers": ["http://localhost:" + port]
         }
     },
-    apis: ['src/rutas/*.js']
+    apis: ['src/routes/*.js']
 }
