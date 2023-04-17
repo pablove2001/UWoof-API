@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors');
 const mongoose = require('mongoose');
 const swaggerUI = require('swagger-ui-express');
 const swaggerJSDoc = require('swagger-jsdoc');
@@ -9,6 +10,7 @@ const routes = require('./src/routes');
 const defaultRoutes = require('./routes');
 
 const app = express();
+app.use(cors());
 
 const mongoUrl = process.env.MONGO_URL;
 
