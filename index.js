@@ -11,6 +11,7 @@ const defaultRoutes = require('./routes');
 
 const app = express();
 app.use(cors());
+app.use(express.json());
 
 const mongoUrl = process.env.MONGO_URL;
 
