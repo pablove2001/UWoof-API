@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getUsers, getUser, postUser, putUser, deleteUser } = require('./../controllers/users');
+const { getUsers, getUser, postUser, putUser, deleteUser, googleLogin } = require('./../controllers/users');
 
 /**
  * @swagger
@@ -189,6 +189,8 @@ router.put('/:id', express.json(), putUser);
  *         description: Internal Server Error
  * */
 router.delete('/:id', express.json(), deleteUser);
+
+router.post('/login/google', googleLogin);
 
 
 module.exports = router;
