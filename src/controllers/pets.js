@@ -19,6 +19,7 @@ function getPet(req, res) {
 }
 
 function postPet(req, res) {
+    console.log('llego a postPet');
     try {
         const pet = new Pet({
             kind_animal: req.body.kind_animal,
@@ -32,7 +33,7 @@ function postPet(req, res) {
             height_cm: req.body.height_cm,
             long_cm: req.body.long_cm,
             weight_kg: req.body.weight_kg,
-            user_id: req.body.user_id,
+            user_id: req.headers.user_id,
             purpose: req.body.purpose,
         });
         pet.save().then(newPet => {

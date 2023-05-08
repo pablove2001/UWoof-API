@@ -103,35 +103,46 @@ function login(req, res) {
 
 function googleLogin(req, res){
     console.log('googleLogin')
-    console.log(req.body.googleToken);
+    // console.log(req.body.googleToken);
     const idToken = req.body.googleToken;
 
     googleClient.verifyIdToken({ idToken: idToken }).then(response => {
         const user = response.getPayload();
         // console.log('Si se valido el token', user);
 
-        console.log('email del inicio', user.email);
-        res.send({token: 'token'});
-        return;
+        // console.log('email del inicio', user.email);
+        // res.send({token: 'token'});
+        // return;
 
         // TODO: problemas con obtener la informacion del usuario por mongodb
+        console.log(user.email);
 
+        // res.send({token: 'token de validacion'});
+        // return;
 
         User.findOne({
             email: user.email
         }).then(response=> {
-            console.log('response : ', response)
+            console.log('response : ', response);
             if(response) {
+                console.log('if');
                 const token = generateToken({ id: response._id, role: response.role });
-                console.log("api token", token)
+                console.log("api token", token);
                 res.send({token});
-            } else {}
+                return;
+            } else {
+                console.log('else');
+            }
         })
         .catch(response => {
-    
+            console.log('cathc ',response);
+            res.status(401).send({ msg: 'token invalido' });
+            return;
         });
 
-        res.status(401).send({ msg: 'token invalido' });
+        console.log('ninguan de las anteriores');
+
+        
     }).catch(err => {
         res.status(401).send({ msg: 'token invalido' });
     });
