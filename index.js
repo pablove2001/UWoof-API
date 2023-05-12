@@ -1,4 +1,5 @@
 const express = require('express');
+const socketio = require('socket.io');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const swaggerUI = require('swagger-ui-express');
@@ -28,12 +29,29 @@ defaultRoutes(app);
 mongoose.connect(mongoUrl).then(() => {
     console.log('Successfully connected to the database');
 
-    app.listen(port, function () {
+    const server = app.listen(port, function () {
         // console.log(mongoUrl);
         console.log(`App is running in port http://localhost:${port}/`);
     });
 
+    const io = socketio(server, {
+        cors: {
+            origin: '*',
+            method: ['GET', 'POST']
+        }
+    });
+
+    io.on('connection', socket => {
+        io.emit('Se conecto alguien');
+        console.log('se conecto alguien');
+
+        socket.on('sendMessage', (data) => {
+            console.log('llego un mensaje: ' + data);
+            socket.broadcast.emit('newMessage', { message: data });
+        })
+    })
 
 }).catch(err => {
     console.log('Could not connect to the database', err);
 });
+
