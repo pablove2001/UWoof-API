@@ -9,6 +9,7 @@ require('dotenv').config();
 const swaggerConf = require('./swagger.config');
 const routes = require('./src/routes');
 const defaultRoutes = require('./routes');
+const { getCredentials } = require('./src/middlewares');
 
 const app = express();
 app.use(cors());
@@ -46,8 +47,27 @@ mongoose.connect(mongoUrl).then(() => {
         console.log('se conecto alguien');
 
         socket.on('sendMessage', (data) => {
-            console.log('llego un mensaje: ' + data);
-            socket.broadcast.emit('newMessage', { message: data });
+            const credentials = getCredentials(data.token);
+
+            if (!credentials) return;
+
+            console.log(credentials);
+            console.log({
+                message: data.message,
+                owned: false, time: new Date(),
+                userId: credentials.id,
+                name: credentials.name,
+                last_name: credentials.last_name,
+            });
+
+
+            socket.broadcast.emit('newMessage', {
+                message: data.message,
+                owned: false, time: new Date(),
+                userId: credentials.id,
+                name: credentials.name,
+                last_name: credentials.last_name,
+            });
         })
     })
 
