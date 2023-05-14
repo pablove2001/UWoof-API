@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { getPets, getPet, postPet, putPet, deletePet } = require('./../controllers/pets');
+const { validateToken } = require('./../middlewares');
 
 /**
  * Obtiene todos los animales de compañía no eliminados y cuyo propósito no se ha logrado.
@@ -66,7 +67,7 @@ router.get('/:id', getPet);
  *       400:
  *         description: Datos de entrada inválidos.
  */
-router.post('', express.json(), postPet);
+router.post('', express.json(), validateToken, postPet);
 
 /**
  * Actualiza un animal de compañía existente.
