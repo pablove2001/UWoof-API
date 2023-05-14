@@ -92,7 +92,7 @@ function login(req, res) {
         password: req.body.password
     }).then(response=> {
         if(response) {
-            const token = generateToken({ id: response._id, role: response.role })
+            const token = generateToken({ id: response._id, role: response.role, name: response.name, last_name: response.last_name })
             res.send({token});
         } else {}
     })
@@ -126,9 +126,9 @@ function googleLogin(req, res){
             console.log('response : ', response);
             if(response) {
                 console.log('if');
-                const token = generateToken({ id: response._id, role: response.role });
+                const token = generateToken({ id: response._id, role: response.role, name: response.name, last_name: response.last_name });
                 console.log("api token", token);
-                res.send({token});
+                res.send({token, "userId":response._id});
                 return;
             } else {
                 console.log('else');

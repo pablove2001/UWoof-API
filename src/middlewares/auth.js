@@ -1,7 +1,7 @@
 require('dotenv').config();
 const jwt = require('jsonwebtoken');
 
-function validateToken (req, res, next) {
+function validateToken(req, res, next) {
     const token = req.headers.token;
     if (!token) {
         return res.status(401).send('Token missing');
@@ -12,6 +12,8 @@ function validateToken (req, res, next) {
         console.log('auth22 decode token');
         req.headers.user_id = decoded.id;
         req.headers.role = decoded.role;
+        req.headers.name = decoded.name;
+        req.headers.last_name = decoded.last_name;
         console.log(req.headers.user_id, req.headers.role);
         if (decoded.exp < Date.now() / 1000) {
             console.log('el token ha expirado');
@@ -24,10 +26,26 @@ function validateToken (req, res, next) {
     }
 }
 
-function generateToken (payload) {
+function generateToken(payload) {
     const options = { expiresIn: '1d' };
     const token = jwt.sign(payload, process.env.JWTKEY, options);
     return token;
 }
 
-module.exports = { validateToken, generateToken };
+function getCredentials(token) {
+    if (!token) return null;
+    try {
+        const decoded = jwt.verify(token, process.env.JWTKEY);
+
+        if (decoded.exp < Date.now() / 1000) return null;
+
+        const credentials = { id: decoded.id, role: decoded.role, name: decoded.name, last_name: decoded.last_name }
+
+        return credentials;
+
+    } catch (error) {
+        return null;
+    }
+}
+
+module.exports = { validateToken, generateToken, getCredentials };
