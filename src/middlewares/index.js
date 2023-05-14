@@ -1,6 +1,7 @@
-const {validateToken, generateToken } = require('./auth');
+const {validateToken, generateToken, getCredentials } = require('./auth');
 
 module.exports = {
     validateToken,
-    generateToken
+    generateToken,
+    getCredentials,
 }
