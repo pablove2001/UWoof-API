@@ -93,7 +93,8 @@ function login(req, res) {
     }).then(response=> {
         if(response) {
             const token = generateToken({ id: response._id, role: response.role, name: response.name, last_name: response.last_name })
-            res.send({token});
+            console.log({token, "userId":response._id});
+            res.send({token, "userId":response._id});
         } else {}
     })
     .catch(response => {
