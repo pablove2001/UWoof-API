@@ -131,5 +131,7 @@ router.put('/:id', express.json(), putPet);
  */
 router.delete('/:id', deletePet);
 
+router.delete('/', deletePet);
+
 
 module.exports = router;
