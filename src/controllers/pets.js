@@ -1,8 +1,6 @@
 const Pet = require('./../models/pet')
 
 function getPets(req, res) {
-    // console.log('get pets', req.headers);
-
     if (req.headers.specie == 'all') {
         Pet.find({ deleted: false, purpose_achieved: false }).then(pets => {
             res.json(pets);
@@ -18,6 +16,50 @@ function getPets(req, res) {
             res.status(400).send('Something went wrong');
         });
     } 
+}
+
+function getUserPets(req, res){
+    // console.log('getuserpets', req.headers)
+
+    Pet.find({ deleted: false, user_id: req.headers.userid }).then(pets => {
+        res.json(pets);
+    }).catch(err => {
+        console.error(err);
+        res.status(400).send('Something went wrong');
+    });
+}
+
+function deletePet(req, res) {
+    const postid = req.headers.postid;
+
+    Pet.findOne({ _id: postid, deleted: false }).then(pet => {
+        console.log('findone')
+        if (!pet) {
+            console.log('findone1')
+            res.status(404).json({ message: 'Pet not found' });
+        }
+        else if (pet.user_id != req.headers.user_id && req.headers.role != 'admin'){
+            console.log('findone2')
+            res.status(400).json({ message: 'Negado el paso' });
+        }
+        else {
+            console.log('findone3')
+            pet.deleted = true;
+
+            pet.save().then(updatedPet => {
+                console.log('findone4')
+                res.status(200).send('todo bien');
+            }).catch(err => {
+                console.log('findone5')
+                console.log('err2',err);
+                res.status(500).send('error catch 2');
+            });
+        }
+    }).catch(err => {
+        console.log('err1',err);
+        res.status(400).send('error catch 1');
+        return;
+    });
 }
 
 function getPet(req, res) {
@@ -92,33 +134,18 @@ function putPet(req, res) {
     });
 }
 
-function deletePet(req, res) {
-    Pet.findByIdAndDelete(req.params.id).then(pet => {
-        if (!pet) {
-            return res.status(404).json({ message: 'Pet not found' });
-        }
-        res.json({ message: 'Pet deleted successfully', pet: pet });
-    }).catch(error => {
-        res.status(400).json({ message: 'Internal Server Error' });
-    });
+// function deletePet(req, res) {
 
-    // Pet.findOne({ _id: req.params.id, deleted: false }).then(pet => {
-    //     if (!pet) {
-    //         return res.status(404).json({ message: 'Pet not found' });
-    //     }
-    //     pet.deleted = true;
-    //     pet.save().then(deletedPet => {
-    //         res.json({ message: 'Pet deleted successfully', deletedPet: deletedPet });
-    //     }).catch(err => {
-    //         console.log(err);
-    //         res.status(500).json({ message: 'Internal Server Error' });
-    //     });
-    // }).catch(err => {
-    //     console.error(err);
-    //     res.status(400).json({
-    //         message: 'Invalid input data'
-    //     });
-    // });
-}
+//     console.log('delete pet');
+//     return;
+//     Pet.findByIdAndDelete(req.params.id).then(pet => {
+//         if (!pet) {
+//             return res.status(404).json({ message: 'Pet not found' });
+//         }
+//         res.json({ message: 'Pet deleted successfully', pet: pet });
+//     }).catch(error => {
+//         res.status(400).json({ message: 'Internal Server Error' });
+//     });
+// }
 
-module.exports = { getPets, getPet, postPet, putPet, deletePet };
+module.exports = { getPets, getPet, getUserPets, postPet, putPet, deletePet };
