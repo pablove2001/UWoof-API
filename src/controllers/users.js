@@ -28,6 +28,9 @@ function getUser(req, res) {
 }
 
 function postUser(req, res) {
+    console.log('post user');
+    console.log(req);
+    console.log(req.body);
     try {
         const user = new User({
             name: req.body.name,
@@ -37,8 +40,9 @@ function postUser(req, res) {
             birthday: req.body.birthday,
             profile_picture: req.body.profile_picture,
         });
-        user.save().then(newUser => {
-            res.status(200).json(newUser);
+        user.save().then(response => {
+            const token = generateToken({ id: response._id, role: response.role, name: response.name, last_name: response.last_name })
+            res.status(200).send({token, "userId":response._id});
         });
     } catch (err) {
         console.error(err);
@@ -104,27 +108,16 @@ function login(req, res) {
 
 function googleLogin(req, res){
     console.log('googleLogin')
-    // console.log(req.body.googleToken);
-    const idToken = req.body.googleToken;
+    const idToken = req.body.idToken;
 
     googleClient.verifyIdToken({ idToken: idToken }).then(response => {
         const user = response.getPayload();
-        // console.log('Si se valido el token', user);
-
-        // console.log('email del inicio', user.email);
-        // res.send({token: 'token'});
-        // return;
-
-        // TODO: problemas con obtener la informacion del usuario por mongodb
         console.log(user.email);
-
-        // res.send({token: 'token de validacion'});
-        // return;
 
         User.findOne({
             email: user.email
-        }).then(response=> {
-            console.log('response : ', response);
+        }).then(async response=> {
+            console.log('response: ', response);
             if(response) {
                 console.log('if');
                 const token = generateToken({ id: response._id, role: response.role, name: response.name, last_name: response.last_name });
@@ -132,7 +125,24 @@ function googleLogin(req, res){
                 res.send({token, "userId":response._id});
                 return;
             } else {
-                console.log('else');
+                console.log('no exite usuario');
+                console.log('req')
+                const newUser = new User({
+                    name: req.body.firstName,
+                    last_name: req.body.lastName,
+                    email: req.body.email,
+                    profile_picture: req.body.photoUrl,
+                });
+                console.log('new uuser', newUser);
+                newUser.save().then(response2 => {
+                    console.log('new user', response2);
+                    if (!response2) return res.status(401).send({ msg: 'token invalido' });
+
+                    const token = generateToken({ id: response2._id, role: response2.role, name: response2.name, last_name: response2.last_name });
+                    console.log("api token", token);
+                    res.send({token, "userId":response2._id});
+                    return;
+                });
             }
         })
         .catch(response => {
@@ -149,37 +159,4 @@ function googleLogin(req, res){
     });
 }
 
-// function registro(req, res) {
-//     User.create({
-//         nombre: req.body.nombre,
-//         correo: req.body.correo,
-//         pwd: req.body.password
-//     }).then(() => {
-//         res.send();
-//     }).catch(err => {
-//         res.status(400).send(err);
-//     })
-// }
-
-function registro(req, res) {
-    try {
-        const user = new User({
-            name: req.body.name,
-            last_name: req.body.last_name,
-            email: req.body.email,
-            password: req.body.password,
-            birthday: req.body.birthday,
-            profile_picture: req.body.profile_picture,
-        });
-        user.save().then(newUser => {
-            res.status(200).json(newUser);
-        });
-    } catch (err) {
-        console.error(err);
-        res.status(400).json({
-            message: 'Invalid input data'
-        });
-    }
-}
-
-module.exports = { getUsers, getUser, postUser, putUser, deleteUser, login, googleLogin, registro };
+module.exports = { getUsers, getUser, postUser, putUser, deleteUser, login, googleLogin };
