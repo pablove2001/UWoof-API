@@ -28,6 +28,9 @@ function getUser(req, res) {
 }
 
 function postUser(req, res) {
+    console.log('post user');
+    console.log(req);
+    console.log(req.body);
     try {
         const user = new User({
             name: req.body.name,
@@ -37,8 +40,9 @@ function postUser(req, res) {
             birthday: req.body.birthday,
             profile_picture: req.body.profile_picture,
         });
-        user.save().then(newUser => {
-            res.status(200).json(newUser);
+        user.save().then(response => {
+            const token = generateToken({ id: response._id, role: response.role, name: response.name, last_name: response.last_name })
+            res.status(200).send({token, "userId":response._id});
         });
     } catch (err) {
         console.error(err);
