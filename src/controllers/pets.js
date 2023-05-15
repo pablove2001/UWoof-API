@@ -1,12 +1,23 @@
 const Pet = require('./../models/pet')
 
 function getPets(req, res) {
-    Pet.find({ deleted: false, purpose_achieved: false }).then(pets => {
-        res.json(pets);
-    }).catch(err => {
-        console.error(err);
-        res.status(400).send('Something went wrong');
-    });
+    // console.log('get pets', req.headers);
+
+    if (req.headers.specie == 'all') {
+        Pet.find({ deleted: false, purpose_achieved: false }).then(pets => {
+            res.json(pets);
+        }).catch(err => {
+            console.error(err);
+            res.status(400).send('Something went wrong');
+        });
+    } else {
+        Pet.find({ deleted: false, purpose_achieved: false, kind_animal: req.headers.specie}).then(pets => {
+            res.json(pets);
+        }).catch(err => {
+            console.error(err);
+            res.status(400).send('Something went wrong');
+        });
+    } 
 }
 
 function getPet(req, res) {
